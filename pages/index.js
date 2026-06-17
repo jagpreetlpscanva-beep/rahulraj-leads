@@ -82,11 +82,9 @@ export default function Home() {
         }
         .hero-left { flex: 1; padding-right: 40px; position: relative; z-index: 2; }
         .hero-right {
-          position: absolute; left: 50%; top: 0;
-          transform: translateX(-50%);
-          width: 100%; max-width: 1200px;
-          height: 100%;
-          z-index: 1; pointer-events: none;
+          flex: 0 0 560px;
+          position: relative;
+          height: 640px;
         }
         .zodiac-wheel {
           position: absolute; left: 50%; top: 50%;
@@ -100,7 +98,6 @@ export default function Home() {
           object-fit: contain; object-position: bottom center;
           z-index: 3;
           filter: drop-shadow(0 20px 60px rgba(0,0,0,0.35));
-          pointer-events: auto;
         }
         .float-card {
           position: absolute; z-index: 4;
@@ -110,9 +107,9 @@ export default function Home() {
           display: flex; align-items: center; gap: 10px;
           box-shadow: 0 8px 32px rgba(232,113,74,0.15);
         }
-        .float-card-1 { top: 40px; left: calc(50% + 200px); animation: float1 3s ease-in-out infinite; }
-        .float-card-2 { bottom: 160px; left: calc(50% - 300px); animation: float2 3s ease-in-out infinite 1s; }
-        .float-card-3 { bottom: 60px; left: calc(50% + 190px); animation: float3 3s ease-in-out infinite 2s; }
+        .float-card-1 { top: 40px; right: 0; animation: float1 3s ease-in-out infinite; }
+        .float-card-2 { bottom: 160px; left: -20px; animation: float2 3s ease-in-out infinite 1s; }
+        .float-card-3 { bottom: 60px; right: -10px; animation: float3 3s ease-in-out infinite 2s; }
         @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
         @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
         @keyframes float3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
