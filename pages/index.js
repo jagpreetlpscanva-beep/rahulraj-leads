@@ -38,9 +38,9 @@ export default function Home() {
 
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: #FFE8D6; color: #3a1f0e; }
+        body { font-family: 'Inter', sans-serif; background: #ffffff; color: #3a1f0e; }
         .nav {
-          background: rgba(251,243,227,0.97); backdrop-filter: blur(8px);
+          background: rgba(255,255,255,0.97); backdrop-filter: blur(8px);
           border-bottom: 1px solid rgba(180,130,40,0.15);
           position: sticky; top: 0; z-index: 200;
         }
@@ -64,14 +64,14 @@ export default function Home() {
         .nav-enroll { background: #E8714A; color: #fff !important; padding: 9px 18px; border-radius: 6px; font-weight: 700 !important; }
         .nav-hamburger { display: none; background: none; border: 1px solid #FFD4B8; border-radius: 6px; padding: 7px 10px; cursor: pointer; font-size: 18px; }
         .hero {
-          background: linear-gradient(135deg, #FF9A76 0%, #FFB088 35%, #FF8A65 70%, #F4795F 100%);
+          background: #ffffff;
           min-height: calc(100vh - 68px);
           display: flex; align-items: center;
           position: relative; overflow: hidden;
         }
         .hero::before {
           content: ''; position: absolute; inset: 0;
-          background: radial-gradient(ellipse at 70% 50%, rgba(255,200,80,0.12) 0%, transparent 60%);
+          background: radial-gradient(ellipse at 70% 50%, rgba(232,113,74,0.06) 0%, transparent 60%);
           pointer-events: none;
         }
         .hero-inner {
@@ -80,27 +80,27 @@ export default function Home() {
           position: relative; z-index: 2;
         }
         .hero-left { flex: 1; padding-right: 40px; }
-        .hero-right { flex: 0 0 560px; position: relative; height: 640px; display: flex; align-items: flex-end; justify-content: center; }
+        .hero-right { flex: 0 0 560px; position: relative; height: 640px; }
         .zodiac-wheel {
           position: absolute; left: 50%; top: 50%;
           transform: translate(-50%, -50%);
           width: 560px; height: 560px; opacity: 0.2;
         }
         .hero-photo {
-          position: relative;
-          height: 640px; width: auto; max-width: 100%;
+          position: absolute; left: 50%; bottom: 0;
+          transform: translateX(-50%);
+          height: 640px; width: auto; max-width: 600px;
           object-fit: contain; object-position: bottom center;
-          z-index: 3; margin: 0 auto;
+          z-index: 3;
           filter: drop-shadow(0 20px 60px rgba(0,0,0,0.35));
         }
         .float-card {
           position: absolute; z-index: 4;
-          background: rgba(255,255,255,0.15);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255,255,255,0.3);
+          background: #fff;
+          border: 1px solid #FFD4B8;
           border-radius: 12px; padding: 10px 16px;
           display: flex; align-items: center; gap: 10px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+          box-shadow: 0 8px 32px rgba(232,113,74,0.15);
         }
         .float-card-1 { top: 40px; right: 0; animation: float1 3s ease-in-out infinite; }
         .float-card-2 { bottom: 160px; left: -20px; animation: float2 3s ease-in-out infinite 1s; }
@@ -110,66 +110,66 @@ export default function Home() {
         @keyframes float3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
         .float-icon {
           width: 36px; height: 36px; border-radius: 8px;
-          background: rgba(255,255,255,0.2);
+          background: #FFE8D6;
           display: flex; align-items: center; justify-content: center;
           font-size: 18px; flex-shrink: 0;
         }
-        .float-val { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.2; }
-        .float-label { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 1px; }
+        .float-val { font-size: 15px; font-weight: 700; color: #3a1f0e; line-height: 1.2; }
+        .float-label { font-size: 11px; color: #b07a5a; margin-top: 1px; }
         .hero-pill {
           display: inline-flex; align-items: center; gap: 8px;
-          background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+          background: #FFE8D6; border: 1px solid #FFD4B8;
           border-radius: 100px; padding: 5px 14px;
-          font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9);
+          font-size: 11px; font-weight: 600; color: #C8702A;
           letter-spacing: 1.5px; margin-bottom: 20px; text-transform: uppercase;
         }
         .hero-h1 {
           font-family: 'Playfair Display', serif;
           font-size: clamp(38px, 4.5vw, 62px);
-          font-weight: 900; line-height: 1.1; color: #fff; margin-bottom: 12px;
+          font-weight: 900; line-height: 1.1; color: #3a1f0e; margin-bottom: 12px;
         }
-        .hero-h1 span { color: #FFF3D9; }
+        .hero-h1 span { color: #E8714A; }
         .hero-subtitle {
           font-family: 'Playfair Display', serif;
           font-size: clamp(18px, 2vw, 24px);
-          color: rgba(255,255,255,0.85); font-weight: 700; margin-bottom: 8px;
+          color: #5a2f18; font-weight: 700; margin-bottom: 8px;
         }
-        .hero-subtitle span { color: #FFF3D9; }
+        .hero-subtitle span { color: #E8714A; }
         .hero-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; }
-        .hero-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.2); }
-        .hero-divider-icon { color: rgba(255,255,255,0.5); font-size: 14px; }
-        .hero-desc { font-size: 15px; color: rgba(255,255,255,0.8); line-height: 1.75; max-width: 460px; margin-bottom: 28px; }
+        .hero-divider-line { flex: 1; height: 1px; background: #FFD4B8; }
+        .hero-divider-icon { color: #E8714A; font-size: 14px; }
+        .hero-desc { font-size: 15px; color: #6a4428; line-height: 1.75; max-width: 460px; margin-bottom: 28px; }
         .features-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 28px; }
         .feature-badge {
-          background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
-          border-radius: 10px; padding: 12px 8px; text-align: center; backdrop-filter: blur(6px);
+          background: #FFE8D6; border: 1px solid #FFD4B8;
+          border-radius: 10px; padding: 12px 8px; text-align: center;
         }
         .feature-icon { font-size: 20px; margin-bottom: 6px; display: block; }
-        .feature-title { font-size: 11px; font-weight: 700; color: #fff; line-height: 1.3; }
-        .feature-sub { font-size: 10px; color: rgba(255,255,255,0.65); margin-top: 3px; line-height: 1.4; }
+        .feature-title { font-size: 11px; font-weight: 700; color: #3a1f0e; line-height: 1.3; }
+        .feature-sub { font-size: 10px; color: #9a5a3a; margin-top: 3px; line-height: 1.4; }
         .cta-row { display: flex; gap: 12px; margin-bottom: 28px; }
         .btn-primary {
-          background: #FFF3D9; color: #7a3010; border: none; border-radius: 8px;
+          background: #E8714A; color: #fff; border: none; border-radius: 8px;
           padding: 14px 22px; font-size: 13px; font-weight: 800;
           cursor: pointer; display: flex; align-items: center; gap: 8px;
           font-family: 'Inter', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;
           transition: all 0.2s; text-decoration: none; flex: 1; justify-content: center;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+          box-shadow: 0 4px 20px rgba(232,113,74,0.3);
         }
-        .btn-primary:hover { background: #ffc93a; transform: translateY(-1px); }
+        .btn-primary:hover { background: #d65f3a; transform: translateY(-1px); }
         .btn-whatsapp {
-          background: rgba(255,255,255,0.12); color: #fff;
-          border: 2px solid rgba(255,255,255,0.35); border-radius: 8px;
+          background: #fff; color: #3a1f0e;
+          border: 2px solid #FFD4B8; border-radius: 8px;
           padding: 14px 22px; font-size: 13px; font-weight: 700;
           cursor: pointer; display: flex; align-items: center; gap: 8px;
           font-family: 'Inter', sans-serif; text-decoration: none;
-          flex: 1; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px);
+          flex: 1; justify-content: center; transition: all 0.2s;
         }
-        .btn-whatsapp:hover { background: rgba(37,211,102,0.25); border-color: #25D366; }
+        .btn-whatsapp:hover { background: rgba(37,211,102,0.08); border-color: #25D366; }
         .trust-bar { display: flex; gap: 20px; flex-wrap: wrap; }
         .trust-item { display: flex; align-items: center; gap: 8px; }
-        .trust-text { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 500; }
-        .trust-text strong { color: #FFF3D9; }
+        .trust-text { font-size: 13px; color: #6a4428; font-weight: 500; }
+        .trust-text strong { color: #E8714A; }
         .tagline-bar { background: #3a1f0e; padding: 18px 24px; text-align: center; }
         .tagline-bar p { font-family: 'Playfair Display',serif; font-size: clamp(14px,2vw,20px); color: #FFAB85; font-style: italic; }
         .features-section { background: #FFE8D6; padding: 80px 24px; }
