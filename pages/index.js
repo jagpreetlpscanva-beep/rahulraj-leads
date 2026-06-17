@@ -560,9 +560,11 @@ export default function Home() {
             </svg>
 
             {/* Photo placeholder — replace src with real photo URL */}
-            <div className="hero-photo-placeholder">
-              <span className="hero-photo-initials">RR</span>
-            </div>
+            <img
+              src="https://raw.githubusercontent.com/jagpreetlpscanva-beep/rahulraj-leads/main/public/ChatGPT%20Image%20Jun%2017%2C%202026%2C%2009_33_15%20AM.png"
+              alt="Pt. Rahul Raj — Vedic Astrologer"
+              className="hero-photo"
+            />
           </div>
         </div>
       </section>
