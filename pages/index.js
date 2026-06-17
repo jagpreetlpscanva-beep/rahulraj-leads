@@ -22,7 +22,8 @@ export default function Home() {
     else { setStatus('error'); setErrorMsg(data.error || 'Something went wrong.'); }
   }
 
-  const WHATSAPP_URL = 'https://wa.me/919999999999?text=Hi%20Rahul%20Raj%20Sir%2C%20I%20want%20to%20join%20the%20astrology%20course';
+  const WHATSAPP_URL = 'https://wa.me/919415312590?text=Hi%20Rahul%20Raj%20Sir%2C%20I%20want%20to%20join%20the%20astrology%20course';
+  const PHONE_NUMBER = '+91 94153 12590';
   const PHOTO_URL = 'https://raw.githubusercontent.com/jagpreetlpscanva-beep/rahulraj-leads/main/public/ChatGPT%20Image%20Jun%2017%2C%202026%2C%2010_11_27%20AM.png';
 
   return (
@@ -79,8 +80,14 @@ export default function Home() {
           display: flex; align-items: center; gap: 0; width: 100%;
           position: relative; z-index: 2;
         }
-        .hero-left { flex: 1; padding-right: 40px; }
-        .hero-right { flex: 0 0 560px; position: relative; height: 640px; }
+        .hero-left { flex: 1; padding-right: 40px; position: relative; z-index: 2; }
+        .hero-right {
+          position: absolute; left: 50%; top: 0;
+          transform: translateX(-50%);
+          width: 100%; max-width: 1200px;
+          height: 100%;
+          z-index: 1; pointer-events: none;
+        }
         .zodiac-wheel {
           position: absolute; left: 50%; top: 50%;
           transform: translate(-50%, -50%);
@@ -93,6 +100,7 @@ export default function Home() {
           object-fit: contain; object-position: bottom center;
           z-index: 3;
           filter: drop-shadow(0 20px 60px rgba(0,0,0,0.35));
+          pointer-events: auto;
         }
         .float-card {
           position: absolute; z-index: 4;
@@ -102,9 +110,9 @@ export default function Home() {
           display: flex; align-items: center; gap: 10px;
           box-shadow: 0 8px 32px rgba(232,113,74,0.15);
         }
-        .float-card-1 { top: 40px; right: 0; animation: float1 3s ease-in-out infinite; }
-        .float-card-2 { bottom: 160px; left: -20px; animation: float2 3s ease-in-out infinite 1s; }
-        .float-card-3 { bottom: 60px; right: -10px; animation: float3 3s ease-in-out infinite 2s; }
+        .float-card-1 { top: 40px; left: calc(50% + 200px); animation: float1 3s ease-in-out infinite; }
+        .float-card-2 { bottom: 160px; left: calc(50% - 300px); animation: float2 3s ease-in-out infinite 1s; }
+        .float-card-3 { bottom: 60px; left: calc(50% + 190px); animation: float3 3s ease-in-out infinite 2s; }
         @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
         @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
         @keyframes float3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
@@ -170,6 +178,8 @@ export default function Home() {
         .trust-item { display: flex; align-items: center; gap: 8px; }
         .trust-text { font-size: 13px; color: #6a4428; font-weight: 500; }
         .trust-text strong { color: #E8714A; }
+        .call-now-link { display: inline-block; margin-top: 16px; font-size: 14px; font-weight: 700; color: #E8714A; text-decoration: none; }
+        .call-now-link:hover { text-decoration: underline; }
         .tagline-bar { background: #3a1f0e; padding: 18px 24px; text-align: center; }
         .tagline-bar p { font-family: 'Playfair Display',serif; font-size: clamp(14px,2vw,20px); color: #FFAB85; font-style: italic; }
         .features-section { background: #FFE8D6; padding: 80px 24px; }
@@ -231,17 +241,23 @@ export default function Home() {
         .footer-brand { font-family: 'Playfair Display', serif; font-size: 16px; color: rgba(255,255,255,0.5); font-weight: 700; }
         .footer-brand span { color: #FFAB85; }
         .footer-text { font-size: 12px; color: rgba(255,255,255,0.3); }
+        .footer-phone { font-size: 13px; color: #FFAB85; font-weight: 600; text-decoration: none; }
+        .footer-phone:hover { color: #fff; }
 
         @media (max-width: 900px) {
           .nav-links { display: none; }
           .nav-hamburger { display: block; }
           .hero-inner { flex-direction: column; padding: 0; }
-          .hero-right { width: 100%; flex: none; height: 440px; order: -1; position: relative; overflow: visible; }
+          .hero-right {
+            position: relative; width: 100%; max-width: 100%;
+            transform: none; flex: none; height: 440px;
+            order: -1; overflow: visible; z-index: 1; pointer-events: auto;
+          }
           .zodiac-wheel { width: 380px; height: 380px; left: 50%; transform: translate(-50%, -50%); top: 50%; }
           .hero-photo { height: 430px; }
-          .float-card-1 { top: 20px; right: 8px; }
+          .float-card-1 { top: 20px; left: auto; right: 8px; }
           .float-card-2 { bottom: 20px; left: 8px; }
-          .float-card-3 { bottom: -10px; right: 8px; }
+          .float-card-3 { bottom: -10px; left: auto; right: 8px; }
           .hero-left { padding: 48px 20px 40px; }
           .features-row { grid-template-columns: repeat(2, 1fr); }
           .cta-row { flex-direction: column; }
@@ -305,6 +321,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
+            <a href={`tel:${PHONE_NUMBER.replace(/\s/g,'')}`} className="call-now-link">📞 Call Now: {PHONE_NUMBER}</a>
           </div>
 
           <div className="hero-right">
@@ -435,6 +452,7 @@ export default function Home() {
       <footer className="footer">
         <div className="footer-inner">
           <div className="footer-brand"><span>RAHUL RAJ</span> — VEDIC ASTROLOGER</div>
+          <a href={`tel:${PHONE_NUMBER.replace(/\s/g,'')}`} className="footer-phone">📞 {PHONE_NUMBER}</a>
           <p className="footer-text">© 2024 Rahul Raj. All rights reserved.</p>
         </div>
       </footer>
