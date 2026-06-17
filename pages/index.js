@@ -8,6 +8,19 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const [courses, setCourses] = useState([]);
+  const [coursesLoading, setCoursesLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/courses')
+      .then(res => res.json())
+      .then(data => {
+        setCourses(data.courses || []);
+        setCoursesLoading(false);
+      })
+      .catch(() => setCoursesLoading(false));
+  }, []);
+
   const [showPopup, setShowPopup] = useState(false);
   const [popupName, setPopupName] = useState('');
   const [popupPhone, setPopupPhone] = useState('');
@@ -507,6 +520,106 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── OUR COURSES (live from database) ── */}
+      {!coursesLoading && courses.length > 0 && (
+        <section className="features-section" style={{ background: '#FFF8EC' }}>
+          <div className="section-inner">
+            <div className="section-header">
+              <div className="section-eyebrow">Our Courses</div>
+              <h2 className="section-title">Choose Your Learning Path</h2>
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: 24,
+                marginTop: 40,
+              }}
+            >
+              {courses.map(course => (
+                <div
+                  key={course.id}
+                  style={{
+                    background: '#fff',
+                    border: '1px solid #E8D9B8',
+                    borderRadius: 14,
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(200,146,42,0.08)',
+                  }}
+                >
+                  {course.image_url && (
+                    <img
+                      src={course.image_url}
+                      alt={course.title}
+                      style={{ width: '100%', height: 180, objectFit: 'cover' }}
+                    />
+                  )}
+                  <div style={{ padding: 22 }}>
+                    {course.duration && (
+                      <span
+                        style={{
+                          fontSize: 12,
+                          color: '#C8922A',
+                          background: '#FFF0DA',
+                          borderRadius: 20,
+                          padding: '3px 10px',
+                          fontWeight: 600,
+                        }}
+                      >
+                        ⏱ {course.duration}
+                      </span>
+                    )}
+                    <h3
+                      style={{
+                        fontFamily: "'Playfair Display', serif",
+                        fontSize: 22,
+                        fontWeight: 700,
+                        color: '#2A1A0E',
+                        margin: '12px 0 8px',
+                      }}
+                    >
+                      {course.title}
+                    </h3>
+                    {course.description && (
+                      <p style={{ fontSize: 14, color: '#7A6545', lineHeight: 1.6, marginBottom: 16 }}>
+                        {course.description}
+                      </p>
+                    )}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingTop: 14,
+                        borderTop: '1px solid #F0E8D5',
+                      }}
+                    >
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: '#C8922A' }}>
+                        ₹{Number(course.price).toLocaleString('en-IN')}
+                      </span>
+                      <a
+                        href="#enroll"
+                        style={{
+                          background: '#C8922A',
+                          color: '#fff',
+                          padding: '9px 18px',
+                          borderRadius: 8,
+                          fontWeight: 600,
+                          fontSize: 14,
+                          textDecoration: 'none',
+                        }}
+                      >
+                        Enroll Now →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="stats-section">
         <div className="stats-grid">
