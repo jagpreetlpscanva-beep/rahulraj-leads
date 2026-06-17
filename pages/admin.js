@@ -111,6 +111,7 @@ export default function Admin() {
     a.href = url; a.download = `leads-${Date.now()}.csv`; a.click();
   }
 
+  // ── Course image upload ───────────────────────────────────
   async function handleCourseImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -122,10 +123,30 @@ export default function Admin() {
     try {
       const dataUrl = await compressImage(file, 800, 600, 0.8);
       setCourseForm(prev => ({ ...prev, image_url: dataUrl }));
+      setCourseMsg('');
     } catch (err) {
       setCourseMsg('Failed to process image.');
     }
     setCourseImgUploading(false);
+  }
+
+  // ── Profile photo upload ──────────────────────────────────
+  async function handleProfileImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setProfileMsg('Please select a valid image file.');
+      return;
+    }
+    setProfileImgUploading(true);
+    try {
+      const dataUrl = await compressImage(file, 600, 600, 0.85);
+      setProfile(prev => ({ ...prev, photo_url: dataUrl }));
+      setProfileMsg('');
+    } catch (err) {
+      setProfileMsg('Failed to process image.');
+    }
+    setProfileImgUploading(false);
   }
 
   async function saveCourse(e) {
@@ -334,17 +355,54 @@ export default function Admin() {
                         <label style={s.label}>Duration</label>
                         <input style={s.input} value={courseForm.duration} onChange={e => setCourseForm({ ...courseForm, duration: e.target.value })} placeholder="e.g. 3 Months" />
                       </div>
+
+                      {/* ── Course Image Upload ── */}
                       <div style={s.fieldWrap}>
-                        <label style={s.label}>Image URL</label>
-                        <input style={s.input} value={courseForm.image_url} onChange={e => setCourseForm({ ...courseForm, image_url: e.target.value })} placeholder="https://..." />
+                        <label style={s.label}>Course Image</label>
+                        <div style={s.uploadRow}>
+                          <label style={s.uploadBtn}>
+                            {courseImgUploading ? 'Uploading...' : '📁 Choose Image'}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleCourseImageUpload}
+                              style={s.hiddenFileInput}
+                              disabled={courseImgUploading}
+                            />
+                          </label>
+                          {courseForm.image_url && (
+                            <button
+                              type="button"
+                              onClick={() => setCourseForm({ ...courseForm, image_url: '' })}
+                              style={s.removeImgBtn}
+                            >
+                              ✕ Remove
+                            </button>
+                          )}
+                        </div>
+                        <input
+                          style={{ ...s.input, marginTop: 8 }}
+                          value={courseForm.image_url}
+                          onChange={e => setCourseForm({ ...courseForm, image_url: e.target.value })}
+                          placeholder="...or paste an image URL"
+                        />
+                        {courseForm.image_url && (
+                          <img
+                            src={courseForm.image_url}
+                            alt="Preview"
+                            style={s.coursePreviewImg}
+                            onError={e => e.target.style.display = 'none'}
+                          />
+                        )}
                       </div>
                     </div>
+
                     <div style={s.fieldWrap}>
                       <label style={s.label}>Description</label>
                       <textarea style={{ ...s.input, height: 80, resize: 'vertical' }} value={courseForm.description} onChange={e => setCourseForm({ ...courseForm, description: e.target.value })} placeholder="What will students learn?" />
                     </div>
                     {courseMsg && <p style={courseMsg.includes('!') ? s.successMsg : s.errorMsg}>{courseMsg}</p>}
-                    <button type="submit" style={s.primaryBtn}>{editingCourse ? 'Update Course' : 'Add Course'}</button>
+                    <button type="submit" style={s.primaryBtn} disabled={courseImgUploading}>{editingCourse ? 'Update Course' : 'Add Course'}</button>
                   </form>
                 </div>
               )}
@@ -411,9 +469,37 @@ export default function Admin() {
                       <label style={s.label}>Email</label>
                       <input style={s.input} type="email" value={profile.email || ''} onChange={e => setProfile({ ...profile, email: e.target.value })} placeholder="rahulraj@example.com" />
                     </div>
+
+                    {/* ── Profile Photo Upload ── */}
                     <div style={s.fieldWrap}>
-                      <label style={s.label}>Photo URL</label>
-                      <input style={s.input} value={profile.photo_url || ''} onChange={e => setProfile({ ...profile, photo_url: e.target.value })} placeholder="https://..." />
+                      <label style={s.label}>Profile Photo</label>
+                      <div style={s.uploadRow}>
+                        <label style={s.uploadBtn}>
+                          {profileImgUploading ? 'Uploading...' : '📁 Choose Photo'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleProfileImageUpload}
+                            style={s.hiddenFileInput}
+                            disabled={profileImgUploading}
+                          />
+                        </label>
+                        {profile.photo_url && (
+                          <button
+                            type="button"
+                            onClick={() => setProfile({ ...profile, photo_url: '' })}
+                            style={s.removeImgBtn}
+                          >
+                            ✕ Remove
+                          </button>
+                        )}
+                      </div>
+                      <input
+                        style={{ ...s.input, marginTop: 8 }}
+                        value={profile.photo_url || ''}
+                        onChange={e => setProfile({ ...profile, photo_url: e.target.value })}
+                        placeholder="...or paste a photo URL"
+                      />
                     </div>
                   </div>
 
@@ -442,7 +528,7 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  {/* Preview */}
+                  {/* Live photo preview */}
                   {profile.photo_url && (
                     <div style={s.photoPreview}>
                       <img src={profile.photo_url} alt="Preview" style={s.photoPreviewImg} onError={e => e.target.style.display = 'none'} />
@@ -451,7 +537,7 @@ export default function Admin() {
                   )}
 
                   {profileMsg && <p style={profileMsg.includes('!') ? s.successMsg : s.errorMsg}>{profileMsg}</p>}
-                  <button type="submit" style={s.primaryBtn} disabled={profileSaving}>
+                  <button type="submit" style={s.primaryBtn} disabled={profileSaving || profileImgUploading}>
                     {profileSaving ? 'Saving...' : '✓ Save Profile'}
                   </button>
                 </form>
@@ -554,6 +640,27 @@ const s = {
   successMsg: { fontSize: 13, color: '#27ae60', fontWeight: 500 },
   errorMsg: { fontSize: 13, color: '#c0392b' },
   loading: { color: '#7A6545', padding: '20px 0' },
+
+  // Image upload
+  uploadRow: { display: 'flex', gap: 10, alignItems: 'center' },
+  uploadBtn: {
+    display: 'inline-flex', alignItems: 'center', gap: 6,
+    background: '#FFF8EC', color: '#C8922A', border: '1.5px dashed #E8D9B8',
+    borderRadius: 6, padding: '9px 16px', fontSize: 13, fontWeight: 600,
+    cursor: 'pointer', fontFamily: 'Inter,sans-serif', position: 'relative',
+  },
+  hiddenFileInput: {
+    position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%',
+  },
+  removeImgBtn: {
+    background: '#FFF0EE', color: '#c0392b', border: '1px solid #f5c6c0',
+    borderRadius: 6, padding: '9px 14px', fontSize: 12, cursor: 'pointer',
+    fontFamily: 'Inter,sans-serif',
+  },
+  coursePreviewImg: {
+    width: '100%', maxWidth: 240, height: 140, objectFit: 'cover',
+    borderRadius: 8, marginTop: 10, border: '1px solid #E8D9B8',
+  },
 
   // Courses grid
   coursesGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 },
