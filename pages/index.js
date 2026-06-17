@@ -24,7 +24,7 @@ export default function Home() {
 
   const WHATSAPP_URL = 'https://wa.me/919415312590?text=Hi%20Rahul%20Raj%20Sir%2C%20I%20want%20to%20join%20the%20astrology%20course';
   const PHONE_NUMBER = '+91 94153 12590';
-  const PHOTO_URL = 'https://raw.githubusercontent.com/jagpreetlpscanva-beep/rahulraj-leads/main/public/ChatGPT%20Image%20Jun%2017%2C%202026%2C%2010_11_27%20AM.png';
+  const PHOTO_URL = '/rahul-raj-cropped.webp';
 
   return (
     <>
@@ -94,7 +94,7 @@ export default function Home() {
         .hero-photo {
           position: absolute; left: 50%; bottom: 0;
           transform: translateX(-50%);
-          height: 640px; width: auto; max-width: 600px;
+          height: 640px; width: auto; max-width: 540px;
           object-fit: contain; object-position: bottom center;
           z-index: 3;
           filter: drop-shadow(0 20px 60px rgba(0,0,0,0.35));
