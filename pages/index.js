@@ -1,933 +1,710 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 
 export default function Home() {
-  const [formData, setFormData] = useState({ name: '', phone: '' });
-  const [status, setStatus] = useState('idle'); // idle | loading | success | error
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const [scrolled, setScrolled] = useState(false);
-  const [showSticky, setShowSticky] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-      setShowSticky(window.scrollY > 600);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleSubmit = async (e, source = 'hero') => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.phone.trim()) return;
     setStatus('loading');
     setErrorMsg('');
-    try {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: formData.name, phone: formData.phone }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setStatus('success');
-      } else {
-        setStatus('error');
-        setErrorMsg(data.error || 'Something went wrong. Please try again.');
-      }
-    } catch {
-      setStatus('error');
-      setErrorMsg('Network error. Please try again.');
-    }
-  };
+    const res = await fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone }),
+    });
+    const data = await res.json();
+    if (res.ok) setStatus('success');
+    else { setStatus('error'); setErrorMsg(data.error || 'Something went wrong.'); }
+  }
 
-  const features = [
-    { icon: '📖', title: '1st Class FREE', sub: 'Start Risk-Free' },
-    { icon: '🎓', title: '15 Classes', sub: 'Complete Training' },
-    { icon: '📜', title: 'Certificate', sub: 'Recognized Nationwide' },
-    { icon: '👨‍👩‍👧', title: 'Legacy', sub: 'Guide Generations' },
-  ];
-
-  const benefits = [
-    { icon: '🎯', title: 'Complete Learning', desc: 'From fundamentals to advanced Vedic techniques. No prior knowledge required.' },
-    { icon: '▶️', title: '15 Step-by-Step Classes', desc: 'Easy-to-follow modules designed for practical, real-world application.' },
-    { icon: '🔮', title: 'Practical & Predictive', desc: 'Master chart reading, predictions, remedies, and real-life consultations.' },
-    { icon: '📜', title: 'Certificate of Completion', desc: 'A professional certificate to launch your astrology career with confidence.' },
-    { icon: '💰', title: 'Learn & Earn', desc: 'Build confidence and start guiding others professionally from Day 1.' },
-    { icon: '🌱', title: 'Generations of Impact', desc: 'Empower yourself and create a lasting legacy of Vedic wisdom.' },
-  ];
-
-  const testimonials = [
-    { name: 'Priya Sharma', city: 'Delhi', text: 'I joined with zero knowledge. After 15 classes I am now guiding clients professionally. Rahul Sir explains everything so clearly!', stars: 5 },
-    { name: 'Amit Verma', city: 'Mumbai', text: 'The course changed my life. I now earn ₹50,000+ per month from astrology consultations. Best investment I ever made.', stars: 5 },
-    { name: 'Sunita Devi', city: 'Jaipur', text: 'Rahul Sir has 15+ years of experience and he shares everything. The WhatsApp support is amazing. Highly recommend!', stars: 5 },
-    { name: 'Rakesh Gupta', city: 'Lucknow', text: 'I was skeptical at first but the free first class convinced me. The depth of knowledge is unmatched. Worth every rupee.', stars: 5 },
-  ];
-
-  const faqs = [
-    { q: 'Do I need any prior knowledge of astrology?', a: 'No! The course starts from absolute basics. If you can read and write, you can learn Vedic Astrology with us.' },
-    { q: 'How are the classes conducted?', a: 'Classes are conducted live online via video call. Recordings are also provided so you never miss a session.' },
-    { q: 'What language are the classes in?', a: 'Classes are primarily in Hindi, making complex Vedic concepts easy to understand for Indian students.' },
-    { q: 'Is the certificate recognized?', a: 'Yes, you receive a professional Certificate of Completion that you can use to establish your astrology practice.' },
-    { q: 'Can I really start earning after this course?', a: 'Many of our students are earning ₹30,000–₹1,00,000+ per month. We provide guidance on how to start your practice.' },
-  ];
-
-  const [openFaq, setOpenFaq] = useState(null);
+  const WHATSAPP_URL = 'https://wa.me/919999999999?text=Hi%20Rahul%20Raj%20Sir%2C%20I%20want%20to%20join%20the%20astrology%20course';
 
   return (
     <>
       <Head>
-        <title>Learn Vedic Astrology from Rahul Raj – Become a Certified Astrologer in 15 Classes</title>
-        <meta name="description" content="Join 5000+ students. Learn Vedic Astrology from expert Rahul Raj. First class FREE. Get certified in just 15 classes. Enroll now." />
+        <title>Learn Astrology from Rahul Raj — Become a Certified Astrologer</title>
+        <meta name="description" content="Learn Vedic Astrology from Pt. Rahul Raj. Become a Certified Astrologer in just 15 classes. 1st class FREE. 5000+ happy students." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
 
-      <style jsx global>{`
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      <style>{`
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #FBF3E3; color: #1a0e00; }
         
-        :root {
-          --gold: #C8861A;
-          --gold-light: #E6A020;
-          --gold-pale: #F5E6C8;
-          --cream: #FDF6EC;
-          --cream-dark: #F7EDDA;
-          --brown-dark: #1A0E00;
-          --brown-mid: #3D2200;
-          --text: #2C1810;
-          --text-light: #6B4423;
-          --white: #FFFFFF;
-        }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-          font-family: 'Inter', sans-serif;
-          background: var(--cream);
-          color: var(--text);
-          line-height: 1.6;
-        }
-
-        h1, h2, h3 {
-          font-family: 'Playfair Display', serif;
-        }
-
         /* NAV */
         .nav {
-          position: fixed;
-          top: 0; left: 0; right: 0;
-          z-index: 100;
-          transition: all 0.3s;
-          padding: 16px 24px;
-        }
-        .nav.scrolled {
-          background: rgba(253, 246, 236, 0.97);
-          backdrop-filter: blur(12px);
-          box-shadow: 0 2px 20px rgba(200,134,26,0.15);
-          padding: 10px 24px;
+          background: rgba(251,243,227,0.97);
+          backdrop-filter: blur(8px);
+          border-bottom: 1px solid rgba(180,130,40,0.15);
+          position: sticky; top: 0; z-index: 100;
         }
         .nav-inner {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+          max-width: 1200px; margin: 0 auto;
+          padding: 0 24px; height: 70px;
+          display: flex; align-items: center; justify-content: space-between;
         }
-        .nav-logo {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
+        .nav-logo { display: flex; align-items: center; gap: 10px; }
         .nav-logo-icon {
-          width: 44px; height: 44px;
-          background: var(--gold);
-          border-radius: 50%;
+          width: 44px; height: 44px; border-radius: 50%;
+          background: linear-gradient(135deg, #C8922A, #E8B84B);
           display: flex; align-items: center; justify-content: center;
-          font-size: 18px;
+          font-size: 20px; font-weight: 900; color: #fff;
           font-family: 'Playfair Display', serif;
-          color: white;
-          font-weight: 900;
-          box-shadow: 0 0 0 3px rgba(200,134,26,0.2);
+          box-shadow: 0 2px 12px rgba(200,146,42,0.35);
         }
-        .nav-logo-text h3 {
-          font-size: 16px;
-          color: var(--brown-dark);
-          letter-spacing: 0.05em;
-          line-height: 1.1;
+        .nav-logo-text { display: flex; flex-direction: column; }
+        .nav-logo-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 18px; font-weight: 700; color: #1a0e00;
+          letter-spacing: 1px; line-height: 1;
         }
-        .nav-logo-text span {
-          font-family: 'Inter', sans-serif;
-          font-size: 10px;
-          letter-spacing: 0.2em;
-          color: var(--gold);
-          font-weight: 600;
+        .nav-logo-sub {
+          font-size: 9px; color: #C8922A; letter-spacing: 3px;
+          margin-top: 2px; font-weight: 600;
         }
         .nav-links {
-          display: flex;
-          align-items: center;
-          gap: 28px;
+          display: flex; align-items: center; gap: 28px;
+          list-style: none;
         }
         .nav-links a {
-          text-decoration: none;
-          font-size: 13px;
-          font-weight: 500;
-          color: var(--text-light);
-          letter-spacing: 0.04em;
+          font-size: 13px; font-weight: 500; color: #4a3010;
+          text-decoration: none; letter-spacing: 0.3px;
           transition: color 0.2s;
         }
-        .nav-links a:hover { color: var(--gold); }
-        .nav-links a.active { color: var(--gold); border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
-        .nav-cta {
-          background: var(--gold);
-          color: white !important;
-          padding: 8px 20px;
-          border-radius: 6px;
-          font-weight: 700 !important;
-          font-size: 13px !important;
-          letter-spacing: 0.06em !important;
-          transition: background 0.2s !important;
+        .nav-links a:hover { color: #C8922A; }
+        .nav-links a.active { color: #C8922A; border-bottom: 2px solid #C8922A; padding-bottom: 2px; }
+        .nav-enroll {
+          background: #C8922A; color: #fff !important;
+          padding: 10px 20px; border-radius: 6px;
+          font-weight: 700 !important; font-size: 13px !important;
+          display: flex; align-items: center; gap: 6px;
         }
-        .nav-cta:hover { background: var(--gold-light) !important; color: white !important; }
-        .nav-mobile-cta {
-          display: none;
-          background: var(--gold);
-          color: white;
-          padding: 8px 16px;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          text-decoration: none;
-          white-space: nowrap;
+        .nav-hamburger {
+          display: none; background: none; border: 1px solid #E8D9B8;
+          border-radius: 6px; padding: 8px; cursor: pointer;
+          color: #1a0e00; font-size: 18px;
         }
 
         /* HERO */
         .hero {
-          min-height: 100vh;
-          background: linear-gradient(160deg, #FFF5E0 0%, #FDEAC8 40%, #F5D9A0 100%);
-          padding-top: 76px;
-          position: relative;
-          overflow: hidden;
-        }
-        .hero::before {
-          content: '';
-          position: absolute;
-          top: -100px; right: -100px;
-          width: 600px; height: 600px;
-          border-radius: 50%;
-          border: 1px solid rgba(200,134,26,0.1);
-          pointer-events: none;
-        }
-        .hero::after {
-          content: '';
-          position: absolute;
-          top: -50px; right: -50px;
-          width: 400px; height: 400px;
-          border-radius: 50%;
-          border: 1px solid rgba(200,134,26,0.15);
-          pointer-events: none;
+          background: linear-gradient(135deg, #FBF3E3 0%, #F5E5C0 40%, #EDD49A 100%);
+          min-height: calc(100vh - 70px);
+          display: flex; align-items: center;
+          position: relative; overflow: hidden;
         }
         .hero-inner {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 60px 24px 40px;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 40px;
-          align-items: center;
-          min-height: calc(100vh - 76px);
+          max-width: 1200px; margin: 0 auto; padding: 48px 24px;
+          display: flex; align-items: center;
+          gap: 0; width: 100%;
         }
-        .hero-eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: rgba(200,134,26,0.1);
-          border: 1px solid rgba(200,134,26,0.3);
-          border-radius: 100px;
-          padding: 6px 16px;
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.15em;
-          color: var(--gold);
-          margin-bottom: 20px;
-        }
-        .hero h1 {
-          font-size: clamp(36px, 5vw, 60px);
-          line-height: 1.1;
-          color: var(--brown-dark);
-          margin-bottom: 12px;
-        }
-        .hero h1 .accent { color: var(--gold); }
-        .hero-sub {
-          font-size: clamp(18px, 2.5vw, 24px);
-          color: var(--brown-mid);
-          font-weight: 500;
-          margin-bottom: 8px;
-        }
-        .hero-sub .accent { color: var(--gold); }
-        .hero-divider {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin: 16px 0;
-          color: var(--gold);
-          font-size: 18px;
-        }
-        .hero-divider::before, .hero-divider::after {
-          content: '';
-          flex: 1;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, var(--gold-pale));
-        }
-        .hero-desc {
-          font-size: 16px;
-          color: var(--text-light);
-          margin-bottom: 28px;
-          line-height: 1.7;
-        }
-        .hero-features {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
-          margin-bottom: 28px;
-        }
-        .hero-feature {
-          text-align: center;
-          padding: 12px 8px;
-          background: rgba(255,255,255,0.6);
-          border-radius: 10px;
-          border: 1px solid rgba(200,134,26,0.2);
-        }
-        .hero-feature-icon {
-          font-size: 20px;
-          margin-bottom: 4px;
-        }
-        .hero-feature-title {
-          font-size: 11px;
-          font-weight: 700;
-          color: var(--brown-dark);
-          line-height: 1.2;
-        }
-        .hero-feature-sub {
-          font-size: 10px;
-          color: var(--text-light);
-          margin-top: 2px;
+        .hero-left { flex: 1; z-index: 2; padding-right: 32px; }
+        .hero-right {
+          flex: 0 0 520px; position: relative;
+          height: 560px;
         }
 
-        /* LEAD FORM */
-        .lead-form-card {
-          background: white;
-          border-radius: 16px;
-          padding: 28px;
-          box-shadow: 0 8px 40px rgba(200,134,26,0.15);
-          border: 1px solid rgba(200,134,26,0.2);
+        /* Zodiac wheel background */
+        .zodiac-wheel {
+          position: absolute; right: -40px; top: 50%;
+          transform: translateY(-50%);
+          width: 520px; height: 520px;
+          opacity: 0.18;
         }
-        .lead-form-title {
-          font-size: 20px;
-          color: var(--brown-dark);
-          margin-bottom: 4px;
+        .hero-photo {
+          position: absolute; bottom: 0; right: 0;
+          height: 540px; width: auto;
+          object-fit: contain;
+          filter: drop-shadow(0 8px 40px rgba(180,120,20,0.3));
+          z-index: 2;
+        }
+        .hero-photo-placeholder {
+          position: absolute; bottom: 0; right: 40px;
+          width: 380px; height: 480px;
+          background: linear-gradient(180deg, rgba(200,146,42,0.1) 0%, rgba(200,146,42,0.25) 100%);
+          border-radius: 200px 200px 0 0;
+          display: flex; align-items: center; justify-content: center;
+          z-index: 2;
+        }
+        .hero-photo-initials {
           font-family: 'Playfair Display', serif;
-        }
-        .lead-form-subtitle {
-          font-size: 13px;
-          color: var(--text-light);
-          margin-bottom: 20px;
-        }
-        .lead-form input {
-          width: 100%;
-          padding: 13px 16px;
-          border: 1.5px solid #E8D5B0;
-          border-radius: 8px;
-          font-size: 15px;
-          font-family: 'Inter', sans-serif;
-          color: var(--text);
-          background: var(--cream);
-          margin-bottom: 12px;
-          transition: border-color 0.2s, box-shadow 0.2s;
-          outline: none;
-        }
-        .lead-form input:focus {
-          border-color: var(--gold);
-          box-shadow: 0 0 0 3px rgba(200,134,26,0.12);
-        }
-        .lead-form input::placeholder { color: #B09060; }
-        .btn-primary {
-          width: 100%;
-          padding: 15px;
-          background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-          color: white;
-          border: none;
-          border-radius: 10px;
-          font-size: 15px;
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          transition: transform 0.2s, box-shadow 0.2s;
-          box-shadow: 0 4px 20px rgba(200,134,26,0.4);
-        }
-        .btn-primary:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 28px rgba(200,134,26,0.5);
-        }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
-        .btn-whatsapp {
-          width: 100%;
-          padding: 13px;
-          background: white;
-          color: #25D366;
-          border: 2px solid #25D366;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          margin-top: 10px;
-          text-decoration: none;
-          transition: background 0.2s, color 0.2s;
-        }
-        .btn-whatsapp:hover { background: #25D366; color: white; }
-        .form-success {
-          text-align: center;
-          padding: 20px;
-        }
-        .form-success-icon { font-size: 48px; margin-bottom: 12px; }
-        .form-success h3 {
-          color: var(--gold);
-          margin-bottom: 8px;
-          font-size: 20px;
-        }
-        .form-success p { color: var(--text-light); font-size: 14px; }
-        .form-error {
-          background: #FFF0F0;
-          border: 1px solid #FFCCCC;
-          color: #CC3333;
-          border-radius: 8px;
-          padding: 10px 14px;
-          font-size: 13px;
-          margin-bottom: 12px;
-        }
-        .form-privacy {
-          font-size: 11px;
-          color: var(--text-light);
-          text-align: center;
-          margin-top: 10px;
+          font-size: 80px; font-weight: 900; color: rgba(200,146,42,0.4);
         }
 
-        /* HERO RIGHT - IMAGE AREA */
-        .hero-image-col {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-        .hero-stats {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 10px;
-        }
-        .hero-stat {
-          text-align: center;
+        .pill {
+          display: inline-flex; align-items: center; gap: 8px;
           background: rgba(255,255,255,0.7);
-          border-radius: 10px;
-          padding: 14px 8px;
-          border: 1px solid rgba(200,134,26,0.15);
+          border: 1px solid rgba(200,146,42,0.3);
+          border-radius: 100px; padding: 6px 14px;
+          font-size: 12px; font-weight: 600; color: #8B6020;
+          letter-spacing: 1px; margin-bottom: 20px;
+          text-transform: uppercase;
         }
-        .hero-stat-num {
+        .pill-icon { font-size: 14px; }
+
+        .hero-h1 {
           font-family: 'Playfair Display', serif;
-          font-size: 20px;
-          font-weight: 700;
-          color: var(--gold);
+          font-size: clamp(36px, 4.5vw, 58px);
+          font-weight: 900; line-height: 1.1;
+          color: #1a0e00; margin-bottom: 10px;
         }
-        .hero-stat-label {
-          font-size: 10px;
-          color: var(--text-light);
-          margin-top: 2px;
+        .hero-h1 span { color: #C8922A; }
+
+        .hero-subtitle {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(18px, 2vw, 24px);
+          color: #4a3010; margin-bottom: 8px; font-weight: 700;
+        }
+        .hero-subtitle span { color: #C8922A; }
+
+        .hero-divider {
+          display: flex; align-items: center; gap: 10px;
+          margin: 16px 0;
+        }
+        .hero-divider-line { flex: 1; height: 1px; background: rgba(200,146,42,0.3); }
+        .hero-divider-icon { color: #C8922A; font-size: 14px; }
+
+        .hero-desc {
+          font-size: 15px; color: #5a4020; line-height: 1.7;
+          max-width: 440px; margin-bottom: 28px;
         }
 
-        /* SECTION: BENEFITS */
-        .section {
-          padding: 80px 24px;
+        /* Feature badges */
+        .features-row {
+          display: grid; grid-template-columns: repeat(4, 1fr);
+          gap: 12px; margin-bottom: 28px;
+        }
+        .feature-badge {
+          background: rgba(255,255,255,0.8);
+          border: 1px solid rgba(200,146,42,0.2);
+          border-radius: 10px; padding: 12px 8px;
+          text-align: center;
+        }
+        .feature-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+        .feature-title { font-size: 12px; font-weight: 700; color: #1a0e00; line-height: 1.3; }
+        .feature-sub { font-size: 10px; color: #7a5a30; margin-top: 3px; line-height: 1.4; }
+
+        /* CTA buttons */
+        .cta-row { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+        .btn-primary {
+          background: #C8922A;
+          color: #fff; border: none; border-radius: 8px;
+          padding: 14px 24px; font-size: 14px; font-weight: 700;
+          cursor: pointer; display: flex; align-items: center; gap: 8px;
+          font-family: 'Inter', sans-serif;
+          box-shadow: 0 4px 20px rgba(200,146,42,0.4);
+          letter-spacing: 0.5px; text-transform: uppercase;
+          transition: all 0.2s; text-decoration: none;
+          flex: 1; justify-content: center;
+        }
+        .btn-primary:hover { background: #b07820; transform: translateY(-1px); }
+        .btn-whatsapp {
+          background: #fff; color: #1a0e00;
+          border: 2px solid rgba(200,146,42,0.3);
+          border-radius: 8px; padding: 14px 24px;
+          font-size: 14px; font-weight: 700; cursor: pointer;
+          display: flex; align-items: center; gap: 8px;
+          font-family: 'Inter', sans-serif;
+          text-decoration: none; flex: 1; justify-content: center;
+          transition: all 0.2s;
+        }
+        .btn-whatsapp:hover { border-color: #25D366; color: #25D366; }
+        .wa-icon { font-size: 18px; }
+
+        /* Trust bar */
+        .trust-bar {
+          display: flex; gap: 20px; flex-wrap: wrap;
+        }
+        .trust-item {
+          display: flex; align-items: center; gap: 8px;
+        }
+        .trust-icon { font-size: 16px; color: #C8922A; }
+        .trust-text { font-size: 13px; color: #5a4020; font-weight: 500; }
+        .trust-text strong { color: #1a0e00; }
+
+        /* FORM SECTION */
+        .form-section {
+          background: #fff;
+          border-top: 3px solid #C8922A;
+          padding: 60px 24px;
+        }
+        .form-section-inner {
+          max-width: 600px; margin: 0 auto; text-align: center;
+        }
+        .form-eyebrow {
+          display: inline-block; background: #FBF3E3;
+          border: 1px solid #E8D9B8; border-radius: 100px;
+          padding: 5px 16px; font-size: 11px; font-weight: 700;
+          color: #C8922A; letter-spacing: 2px; margin-bottom: 16px;
+          text-transform: uppercase;
+        }
+        .form-title {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(24px, 3vw, 36px); font-weight: 900;
+          color: #1a0e00; margin-bottom: 8px;
+        }
+        .form-sub { font-size: 15px; color: #7a5a30; margin-bottom: 32px; }
+
+        .lead-form {
+          background: #FBF3E3; border-radius: 16px;
+          border: 1px solid #E8D9B8; padding: 32px;
+          display: flex; flex-direction: column; gap: 16px;
+          text-align: left;
+        }
+        .field-wrap { display: flex; flex-direction: column; gap: 6px; }
+        .field-label { font-size: 13px; font-weight: 600; color: #4a3010; }
+        .field-input {
+          border: 2px solid #E8D9B8; border-radius: 8px;
+          padding: 13px 16px; font-size: 15px;
+          outline: none; background: #fff;
+          font-family: 'Inter', sans-serif; color: #1a0e00;
+          transition: border-color 0.2s;
+          width: 100%;
+        }
+        .field-input:focus { border-color: #C8922A; }
+        .submit-btn {
+          background: #C8922A; color: #fff; border: none;
+          border-radius: 8px; padding: 16px;
+          font-size: 16px; font-weight: 700; cursor: pointer;
+          font-family: 'Inter', sans-serif;
+          letter-spacing: 0.5px;
+          box-shadow: 0 4px 20px rgba(200,146,42,0.35);
+          transition: all 0.2s;
+        }
+        .submit-btn:hover:not(:disabled) { background: #b07820; }
+        .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .privacy-note { font-size: 12px; color: #9a7a50; text-align: center; }
+        .error-msg { color: #c0392b; font-size: 13px; }
+
+        .success-box { text-align: center; padding: 16px 0; }
+        .success-emoji { font-size: 52px; display: block; margin-bottom: 12px; }
+        .success-title {
+          font-family: 'Playfair Display', serif;
+          font-size: 28px; font-weight: 900; color: #C8922A; margin-bottom: 8px;
+        }
+        .success-text { font-size: 15px; color: #5a4020; line-height: 1.7; }
+
+        /* FEATURES SECTION */
+        .features-section {
+          background: #FBF3E3; padding: 72px 24px;
+          border-top: 1px solid rgba(200,146,42,0.15);
         }
         .section-inner { max-width: 1200px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 48px; }
         .section-eyebrow {
-          text-align: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 16px;
-          color: var(--gold);
-          font-size: 13px;
-          letter-spacing: 0.15em;
-          font-weight: 700;
-          margin-bottom: 12px;
+          display: flex; align-items: center; justify-content: center; gap: 12px;
+          font-size: 13px; color: #C8922A; font-weight: 700;
+          letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
         }
         .section-eyebrow::before, .section-eyebrow::after {
-          content: '✦';
-          font-size: 10px;
+          content: ''; flex: 0 0 40px; height: 1px;
+          background: linear-gradient(to right, transparent, #C8922A);
         }
+        .section-eyebrow::after { background: linear-gradient(to left, transparent, #C8922A); }
         .section-title {
-          text-align: center;
-          font-size: clamp(26px, 4vw, 40px);
-          color: var(--brown-dark);
-          margin-bottom: 8px;
-        }
-        .section-sub {
-          text-align: center;
-          color: var(--gold);
           font-family: 'Playfair Display', serif;
-          font-style: italic;
-          font-size: 18px;
-          margin-bottom: 48px;
+          font-size: clamp(24px, 3vw, 38px); font-weight: 900;
+          color: #1a0e00; line-height: 1.2;
         }
-        .benefits-grid {
+
+        .features-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 24px;
-        }
-        .benefit-card {
-          background: white;
-          border-radius: 14px;
-          padding: 28px 24px;
-          border: 1px solid rgba(200,134,26,0.15);
-          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-        }
-        .benefit-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 32px rgba(200,134,26,0.12);
-          border-color: rgba(200,134,26,0.4);
-        }
-        .benefit-icon {
-          width: 52px; height: 52px;
-          background: linear-gradient(135deg, rgba(200,134,26,0.1), rgba(200,134,26,0.05));
-          border-radius: 12px;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 24px;
-          margin-bottom: 16px;
-          border: 1px solid rgba(200,134,26,0.2);
-        }
-        .benefit-title {
-          font-size: 16px;
-          font-weight: 700;
-          color: var(--brown-dark);
-          margin-bottom: 8px;
-        }
-        .benefit-desc { font-size: 14px; color: var(--text-light); line-height: 1.6; }
-
-        /* SOCIAL PROOF */
-        .social-proof { background: var(--brown-dark); padding: 60px 24px; }
-        .social-inner { max-width: 1200px; margin: 0 auto; }
-        .testimonials-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
           gap: 20px;
-          margin-top: 40px;
+        }
+        .feature-card {
+          background: #fff; border: 1px solid #E8D9B8;
+          border-radius: 12px; padding: 28px 20px;
+          display: flex; flex-direction: column; gap: 12px;
+        }
+        .feature-card-icon {
+          width: 52px; height: 52px; border-radius: 50%;
+          background: #FBF3E3; border: 2px solid #E8D9B8;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 22px; color: #C8922A;
+        }
+        .feature-card-title {
+          font-weight: 700; font-size: 16px; color: #1a0e00;
+        }
+        .feature-card-desc { font-size: 14px; color: #7a5a30; line-height: 1.7; }
+
+        /* STATS SECTION */
+        .stats-section {
+          background: linear-gradient(135deg, #2a1800, #1a0e00);
+          padding: 60px 24px;
+        }
+        .stats-grid {
+          max-width: 900px; margin: 0 auto;
+          display: grid; grid-template-columns: repeat(4, 1fr);
+          gap: 32px; text-align: center;
+        }
+        .stat-item {}
+        .stat-val {
+          font-family: 'Playfair Display', serif;
+          font-size: 40px; font-weight: 900; color: #E8B84B;
+          line-height: 1;
+        }
+        .stat-label { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+
+        /* TESTIMONIALS */
+        .testimonials-section {
+          background: #fff; padding: 72px 24px;
+        }
+        .testimonials-grid {
+          display: grid; grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
         }
         .testimonial-card {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(200,134,26,0.3);
-          border-radius: 14px;
-          padding: 24px;
+          background: #FBF3E3; border: 1px solid #E8D9B8;
+          border-radius: 12px; padding: 24px;
         }
-        .testimonial-stars { color: var(--gold); font-size: 14px; margin-bottom: 12px; }
-        .testimonial-text { color: rgba(255,255,255,0.85); font-size: 14px; line-height: 1.7; margin-bottom: 16px; font-style: italic; }
-        .testimonial-author { display: flex; align-items: center; gap: 10px; }
-        .testimonial-avatar {
-          width: 36px; height: 36px;
-          background: var(--gold);
-          border-radius: 50%;
+        .t-stars { color: #C8922A; font-size: 14px; margin-bottom: 12px; }
+        .t-quote { font-size: 14px; color: #4a3010; line-height: 1.7; font-style: italic; margin-bottom: 16px; }
+        .t-author { display: flex; align-items: center; gap: 10px; }
+        .t-avatar {
+          width: 38px; height: 38px; border-radius: 50%;
+          background: linear-gradient(135deg, #C8922A, #E8B84B);
           display: flex; align-items: center; justify-content: center;
-          font-size: 14px;
-          font-weight: 700;
-          color: white;
+          font-weight: 700; color: #fff; font-size: 16px;
         }
-        .testimonial-name { font-weight: 700; font-size: 13px; color: white; }
-        .testimonial-city { font-size: 11px; color: rgba(255,255,255,0.5); }
+        .t-name { font-size: 14px; font-weight: 700; color: #1a0e00; }
+        .t-city { font-size: 12px; color: #9a7a50; }
 
-        /* FAQ */
-        .faq-section { background: var(--cream-dark); padding: 80px 24px; }
-        .faq-list { max-width: 760px; margin: 40px auto 0; }
-        .faq-item {
-          background: white;
-          border-radius: 10px;
-          margin-bottom: 10px;
-          border: 1px solid rgba(200,134,26,0.15);
-          overflow: hidden;
+        /* BOTTOM CTA */
+        .bottom-cta {
+          background: linear-gradient(135deg, #C8922A, #E8B84B);
+          padding: 72px 24px; text-align: center;
         }
-        .faq-question {
-          padding: 18px 24px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 15px;
-          color: var(--brown-dark);
-          transition: color 0.2s;
-          user-select: none;
+        .bottom-cta-tagline {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(14px, 2vw, 18px); color: rgba(255,255,255,0.85);
+          font-style: italic; margin-bottom: 8px;
         }
-        .faq-question:hover { color: var(--gold); }
-        .faq-arrow { font-size: 12px; color: var(--gold); transition: transform 0.2s; }
-        .faq-arrow.open { transform: rotate(180deg); }
-        .faq-answer {
-          padding: 0 24px 18px;
-          font-size: 14px;
-          color: var(--text-light);
-          line-height: 1.7;
+        .bottom-cta-title {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(24px, 3.5vw, 44px); font-weight: 900;
+          color: #fff; margin-bottom: 8px;
         }
-
-        /* CTA SECTION */
-        .cta-section {
-          background: linear-gradient(135deg, var(--gold) 0%, #A06010 100%);
-          padding: 80px 24px;
-          text-align: center;
+        .bottom-cta-sub { font-size: 16px; color: rgba(255,255,255,0.85); margin-bottom: 32px; }
+        .bottom-cta-btn {
+          display: inline-flex; align-items: center; gap: 10px;
+          background: #fff; color: #C8922A;
+          border-radius: 8px; padding: 16px 36px;
+          font-size: 16px; font-weight: 700;
+          text-decoration: none; letter-spacing: 0.5px;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+          transition: transform 0.2s;
         }
-        .cta-section h2 { color: white; font-size: clamp(28px, 4vw, 44px); margin-bottom: 16px; }
-        .cta-section p { color: rgba(255,255,255,0.85); font-size: 17px; margin-bottom: 36px; max-width: 560px; margin-left: auto; margin-right: auto; }
-        .cta-form {
-          display: flex;
-          gap: 12px;
-          max-width: 480px;
-          margin: 0 auto 16px;
-          flex-direction: column;
-        }
-        .cta-form input {
-          padding: 14px 18px;
-          border-radius: 8px;
-          border: 2px solid rgba(255,255,255,0.3);
-          background: rgba(255,255,255,0.15);
-          color: white;
-          font-size: 15px;
-          font-family: 'Inter', sans-serif;
-          outline: none;
-          transition: border-color 0.2s;
-        }
-        .cta-form input:focus { border-color: white; }
-        .cta-form input::placeholder { color: rgba(255,255,255,0.6); }
-        .btn-cta-white {
-          padding: 15px 32px;
-          background: white;
-          color: var(--gold);
-          border: none;
-          border-radius: 8px;
-          font-size: 15px;
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          cursor: pointer;
-          transition: transform 0.2s, box-shadow 0.2s;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-        .btn-cta-white:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
-
-        /* STICKY MOBILE CTA */
-        .sticky-cta {
-          position: fixed;
-          bottom: 0; left: 0; right: 0;
-          background: white;
-          padding: 12px 16px;
-          box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-          z-index: 99;
-          display: none;
-          gap: 10px;
-        }
+        .bottom-cta-btn:hover { transform: translateY(-2px); }
 
         /* FOOTER */
         .footer {
-          background: var(--brown-dark);
-          padding: 40px 24px 24px;
-          text-align: center;
+          background: #0e0700; padding: 28px 24px;
         }
-        .footer-logo { color: var(--gold); font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 8px; }
-        .footer-tagline { color: rgba(255,255,255,0.5); font-size: 12px; letter-spacing: 0.2em; margin-bottom: 20px; }
-        .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
-        .footer-links a { color: rgba(255,255,255,0.6); font-size: 13px; text-decoration: none; transition: color 0.2s; }
-        .footer-links a:hover { color: var(--gold); }
-        .footer-copy { color: rgba(255,255,255,0.3); font-size: 12px; }
+        .footer-inner {
+          max-width: 1200px; margin: 0 auto;
+          display: flex; align-items: center;
+          justify-content: space-between; flex-wrap: wrap; gap: 12px;
+        }
+        .footer-brand {
+          font-family: 'Playfair Display', serif;
+          font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 700;
+        }
+        .footer-brand span { color: #E8B84B; }
+        .footer-text { font-size: 12px; color: rgba(255,255,255,0.3); }
 
-        /* RESPONSIVE */
+        /* MOBILE */
         @media (max-width: 768px) {
           .nav-links { display: none; }
-          .nav-mobile-cta { display: block; }
-          .hero-inner {
-            grid-template-columns: 1fr;
-            padding: 24px 16px 32px;
-            min-height: unset;
-            gap: 24px;
+          .nav-hamburger { display: block; }
+          .hero-inner { flex-direction: column; padding: 0; }
+          .hero-right {
+            width: 100%; flex: none;
+            height: 340px; order: -1;
           }
-          .hero-features { grid-template-columns: repeat(2, 1fr); }
-          .hero-stats { grid-template-columns: repeat(2, 1fr); }
-          .hero-image-col { order: -1; }
-          .benefits-grid { grid-template-columns: 1fr; }
+          .zodiac-wheel { width: 340px; height: 340px; right: 0; }
+          .hero-photo { height: 340px; }
+          .hero-photo-placeholder { width: 260px; height: 320px; right: 20px; }
+          .hero-photo-initials { font-size: 60px; }
+          .hero-left { padding: 24px 20px 36px; }
+          .features-row { grid-template-columns: repeat(2, 1fr); }
+          .cta-row { flex-direction: column; }
+          .features-grid { grid-template-columns: 1fr; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
           .testimonials-grid { grid-template-columns: 1fr; }
-          .sticky-cta { display: flex; }
-          .section { padding: 60px 16px; }
-          .faq-section { padding: 60px 16px; }
-          .cta-section { padding: 60px 16px; }
-          .social-proof { padding: 60px 16px; }
-        }
-
-        @media (max-width: 480px) {
-          .hero-features { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+          .hero-h1 { font-size: 32px; }
         }
       `}</style>
 
-      {/* NAV */}
-      <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
+      {/* ── NAV ── */}
+      <nav className="nav">
         <div className="nav-inner">
           <div className="nav-logo">
             <div className="nav-logo-icon">R</div>
             <div className="nav-logo-text">
-              <h3>RAHUL RAJ</h3>
-              <span>VEDIC ASTROLOGER</span>
+              <span className="nav-logo-name">RAHUL RAJ</span>
+              <span className="nav-logo-sub">VEDIC ASTROLOGER</span>
             </div>
           </div>
-          <div className="nav-links">
-            <a href="#benefits">About</a>
-            <a href="#benefits" className="active">Teacher Training</a>
-            <a href="#benefits">Curriculum</a>
-            <a href="#testimonials">Certificates</a>
-            <a href="#faq">FAQ</a>
-            <a href="#cta" className="nav-cta">📅 ENROLL NOW</a>
-          </div>
-          <a href="#hero-form" className="nav-mobile-cta">JOIN FREE →</a>
+          <ul className="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About Me</a></li>
+            <li><a href="#" className="active">Teacher Training</a></li>
+            <li><a href="#">Course Curriculum</a></li>
+            <li><a href="#">Certificates</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#enroll" className="nav-enroll">📅 Enroll Now</a></li>
+          </ul>
+          <button className="nav-hamburger" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="hero" id="home">
+      {/* ── HERO ── */}
+      <section className="hero">
         <div className="hero-inner">
-          {/* LEFT: Copy */}
-          <div>
-            <div className="hero-eyebrow">🪷 LEARN. UNDERSTAND. TRANSFORM.</div>
-            <h1>
+          <div className="hero-left">
+            <div className="pill">
+              <span className="pill-icon">🪷</span>
+              LEARN. UNDERSTAND. TRANSFORM.
+            </div>
+
+            <h1 className="hero-h1">
               Learn Astrology<br />
-              from <span className="accent">Rahul Raj</span>
+              from <span>Rahul Raj</span>
             </h1>
-            <p className="hero-sub">
-              Become a Certified Astrologer in Just <span className="accent">15 Classes</span>
+            <p className="hero-subtitle">
+              Become a Certified Astrologer in Just <span>15 Classes</span>
             </p>
-            <div className="hero-divider">✦</div>
+
+            <div className="hero-divider">
+              <div className="hero-divider-line"></div>
+              <span className="hero-divider-icon">❋</span>
+              <div className="hero-divider-line"></div>
+            </div>
+
             <p className="hero-desc">
-              Join thousands of students who are transforming their lives and guiding others with the ancient power of Vedic Astrology.
+              Join thousands of students who are transforming their life
+              and guiding others with the power of Vedic Astrology.
             </p>
 
-            <div className="hero-features">
-              {features.map((f, i) => (
-                <div className="hero-feature" key={i}>
-                  <div className="hero-feature-icon">{f.icon}</div>
-                  <div className="hero-feature-title">{f.title}</div>
-                  <div className="hero-feature-sub">{f.sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* MOBILE FORM */}
-            <div id="hero-form" style={{ display: 'block' }}>
-              <div className="lead-form-card">
-                {status === 'success' ? (
-                  <div className="form-success">
-                    <div className="form-success-icon">🌟</div>
-                    <h3>You're Registered!</h3>
-                    <p>Rahul Sir's team will contact you within 24 hours to schedule your <strong>FREE first class</strong>.</p>
-                    <a href="https://wa.me/919999999999" className="btn-whatsapp" style={{ marginTop: 16 }}>
-                      💬 WhatsApp Us Directly
-                    </a>
-                  </div>
-                ) : (
-                  <>
-                    <h2 className="lead-form-title">Book Your FREE First Class</h2>
-                    <p className="lead-form-subtitle">Enter your details — Rahul Sir's team will call you</p>
-                    {status === 'error' && <div className="form-error">⚠️ {errorMsg}</div>}
-                    <form className="lead-form" onSubmit={handleSubmit}>
-                      <input
-                        type="text"
-                        placeholder="Your Full Name"
-                        value={formData.name}
-                        onChange={e => setFormData({ ...formData, name: e.target.value })}
-                        required
-                      />
-                      <input
-                        type="tel"
-                        placeholder="WhatsApp Number (10 digits)"
-                        value={formData.phone}
-                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                        required
-                        maxLength={15}
-                      />
-                      <button type="submit" className="btn-primary" disabled={status === 'loading'}>
-                        {status === 'loading' ? '⏳ Registering...' : '📅 JOIN FIRST CLASS FREE →'}
-                      </button>
-                    </form>
-                    <a href="https://wa.me/919999999999" className="btn-whatsapp" target="_blank" rel="noopener noreferrer">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                      WHATSAPP US
-                    </a>
-                    <p className="form-privacy">🔒 100% Private. No spam. We only call to schedule your class.</p>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT: Stats */}
-          <div className="hero-image-col">
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(200,134,26,0.08), rgba(200,134,26,0.03))',
-              border: '1px solid rgba(200,134,26,0.2)',
-              borderRadius: 16,
-              padding: '32px 24px',
-              textAlign: 'center',
-            }}>
-              <div style={{ fontSize: 80, marginBottom: 8 }}>🔮</div>
-              <p style={{ color: 'var(--gold)', fontFamily: 'Playfair Display, serif', fontSize: 20, fontStyle: 'italic', marginBottom: 16 }}>
-                "One Decision Today Can Change Your Life & Generations Forever."
-              </p>
-              <p style={{ fontSize: 13, color: 'var(--text-light)' }}>— Rahul Raj, Vedic Astrologer</p>
-            </div>
-            <div className="hero-stats">
+            <div className="features-row">
               {[
-                { num: '5000+', label: 'Happy Students' },
-                { num: '15+', label: 'Years Experience' },
-                { num: '4.9/5', label: 'Student Rating' },
-                { num: '100%', label: 'Trusted Guidance' },
-              ].map((s, i) => (
-                <div className="hero-stat" key={i}>
-                  <div className="hero-stat-num">{s.num}</div>
-                  <div className="hero-stat-label">{s.label}</div>
+                ['📖', '1st Class FREE', 'Start Your Journey Risk-Free'],
+                ['🎓', '15 Classes Complete Training', 'Step-by-Step From Basics to Advanced'],
+                ['📜', 'Certificate of Completion', 'Recognized Certification'],
+                ['👨‍👩‍👧‍👦', 'Generations of Guidance', 'Learn. Practice. Transform.'],
+              ].map(([icon, title, sub]) => (
+                <div key={title} className="feature-badge">
+                  <span className="feature-icon">{icon}</span>
+                  <div className="feature-title">{title}</div>
+                  <div className="feature-sub">{sub}</div>
                 </div>
               ))}
+            </div>
+
+            <div className="cta-row">
+              <a href="#enroll" className="btn-primary">
+                📅 JOIN FIRST CLASS FREE →
+              </a>
+              <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="btn-whatsapp">
+                <span className="wa-icon">💬</span> WHATSAPP US
+              </a>
+            </div>
+
+            <div className="trust-bar">
+              {[
+                ['👥', <><strong>5000+</strong> Happy Students</>],
+                ['⭐', <><strong>15+</strong> Years Experience</>],
+                ['🌟', <><strong>4.9/5</strong> Student Rating</>],
+                ['🛡️', <><strong>100%</strong> Trusted Guidance</>],
+              ].map(([icon, text], i) => (
+                <div key={i} className="trust-item">
+                  <span className="trust-icon">{icon}</span>
+                  <span className="trust-text">{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="hero-right">
+            {/* Zodiac Wheel SVG */}
+            <svg className="zodiac-wheel" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="250" cy="250" r="235" fill="none" stroke="#C8922A" strokeWidth="1.5"/>
+              <circle cx="250" cy="250" r="195" fill="none" stroke="#C8922A" strokeWidth="0.8" strokeDasharray="4 8"/>
+              <circle cx="250" cy="250" r="150" fill="none" stroke="#C8922A" strokeWidth="0.8"/>
+              <circle cx="250" cy="250" r="100" fill="none" stroke="#C8922A" strokeWidth="1"/>
+              {['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map((sym, i) => {
+                const angle = (i * 30 - 90) * Math.PI / 180;
+                const x = 250 + 215 * Math.cos(angle);
+                const y = 250 + 215 * Math.sin(angle);
+                const lx = 250 + 172 * Math.cos(angle);
+                const ly = 250 + 172 * Math.sin(angle);
+                return (
+                  <g key={i}>
+                    <text x={x} y={y} textAnchor="middle" dominantBaseline="middle" fontSize="22" fill="#C8922A">{sym}</text>
+                    <line x1={250 + 100*Math.cos(angle)} y1={250 + 100*Math.sin(angle)}
+                      x2={250 + 195*Math.cos(angle)} y2={250 + 195*Math.sin(angle)}
+                      stroke="#C8922A" strokeWidth="0.5" opacity="0.4"/>
+                  </g>
+                );
+              })}
+              <text x="250" y="240" textAnchor="middle" fontSize="14" fill="#C8922A" fontFamily="serif" letterSpacing="4">VEDIC</text>
+              <text x="250" y="262" textAnchor="middle" fontSize="14" fill="#C8922A" fontFamily="serif" letterSpacing="3">JYOTISH</text>
+            </svg>
+
+            {/* Photo placeholder — replace src with real photo URL */}
+            <div className="hero-photo-placeholder">
+              <span className="hero-photo-initials">RR</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* BENEFITS */}
-      <section className="section" id="benefits">
+      {/* Tagline banner */}
+      <div style={{ background: '#1a0e00', padding: '18px 24px', textAlign: 'center' }}>
+        <p style={{ fontFamily: "'Playfair Display',serif", fontSize: 'clamp(14px,2vw,20px)', color: '#E8B84B', fontStyle: 'italic' }}>
+          ❋ One Decision Today Can Change Your Life &amp; Generations Forever. ❋
+        </p>
+      </div>
+
+      {/* ── FEATURES ── */}
+      <section className="features-section">
         <div className="section-inner">
-          <div className="section-eyebrow">FROM BEGINNER TO ASTROLOGER</div>
-          <h2 className="section-title">15 Transformative Classes That<br />Will Change Your Life</h2>
-          <p className="section-sub">Everything you need to become a practicing Vedic Astrologer</p>
-          <div className="benefits-grid">
-            {benefits.map((b, i) => (
-              <div className="benefit-card" key={i}>
-                <div className="benefit-icon">{b.icon}</div>
-                <h3 className="benefit-title">{b.title}</h3>
-                <p className="benefit-desc">{b.desc}</p>
+          <div className="section-header">
+            <div className="section-eyebrow">❋ Course Highlights ❋</div>
+            <h2 className="section-title">From Beginner to Astrologer<br />in 15 Transformative Classes</h2>
+          </div>
+          <div className="features-grid">
+            {[
+              ['🎯', 'Complete Learning', 'From fundamentals to advanced techniques. No prior knowledge required.'],
+              ['▶️', '15 Step-by-Step Classes', 'Easy to understand modules designed for practical learning.'],
+              ['🔮', 'Practical & Predictive', 'Learn chart reading, prediction, remedies and real-life applications.'],
+              ['📜', 'Certificate of Completion', 'Get a professional certificate upon successful completion of the course.'],
+              ['💰', 'Learn & Earn', 'Build your confidence and start guiding others professionally.'],
+              ['🌿', 'Generations of Impact', 'Empower yourself and create a legacy of wisdom for generations.'],
+            ].map(([icon, title, desc]) => (
+              <div key={title} className="feature-card">
+                <div className="feature-card-icon">{icon}</div>
+                <div className="feature-card-title">{title}</div>
+                <p className="feature-card-desc">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="social-proof" id="testimonials">
-        <div className="social-inner">
-          <div className="section-eyebrow" style={{ color: 'var(--gold)' }}>STUDENT SUCCESS STORIES</div>
-          <h2 className="section-title" style={{ color: 'white' }}>Lives Transformed by Vedic Astrology</h2>
-          <div className="testimonials-grid">
-            {testimonials.map((t, i) => (
-              <div className="testimonial-card" key={i}>
-                <div className="testimonial-stars">{'★'.repeat(t.stars)}</div>
-                <p className="testimonial-text">"{t.text}"</p>
-                <div className="testimonial-author">
-                  <div className="testimonial-avatar">{t.name[0]}</div>
-                  <div>
-                    <div className="testimonial-name">{t.name}</div>
-                    <div className="testimonial-city">{t.city}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* ── STATS ── */}
+      <section className="stats-section">
+        <div className="stats-grid">
+          {[['5000+','Happy Students'],['15+','Years Experience'],['4.9/5','Student Rating'],['100%','Trusted Guidance']].map(([val, label]) => (
+            <div key={label} className="stat-item">
+              <div className="stat-val">{val}</div>
+              <div className="stat-label">{label}</div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="faq-section" id="faq">
-        <div className="section-inner">
-          <div className="section-eyebrow">COMMON QUESTIONS</div>
-          <h2 className="section-title">Everything You Need to Know</h2>
-          <div className="faq-list">
-            {faqs.map((faq, i) => (
-              <div className="faq-item" key={i}>
-                <div className="faq-question" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                  {faq.q}
-                  <span className={`faq-arrow ${openFaq === i ? 'open' : ''}`}>▼</span>
-                </div>
-                {openFaq === i && <div className="faq-answer">{faq.a}</div>}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── LEAD FORM ── */}
+      <section className="form-section" id="enroll">
+        <div className="form-section-inner">
+          <span className="form-eyebrow">🎓 Free Counselling Session</span>
+          <h2 className="form-title">Get Course Details — It's Free</h2>
+          <p className="form-sub">Our team will call you within 24 hours with full details.</p>
 
-      {/* FINAL CTA */}
-      <section className="cta-section" id="cta">
-        <div style={{ maxWidth: 700, margin: '0 auto' }}>
-          <h2>Start Your Journey Today — <br />First Class is FREE</h2>
-          <p>No experience needed. No risk. Just one step toward a life guided by Vedic wisdom.</p>
-          <div className="cta-form">
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={formData.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
-            />
-            <input
-              type="tel"
-              placeholder="WhatsApp Number"
-              value={formData.phone}
-              onChange={e => setFormData({ ...formData, phone: e.target.value })}
-            />
+          <div className="lead-form">
             {status === 'success' ? (
-              <div style={{ background: 'rgba(255,255,255,0.2)', borderRadius: 8, padding: '16px', color: 'white', textAlign: 'center', fontWeight: 600 }}>
-                ✅ Registered! We'll call you within 24 hours.
+              <div className="success-box">
+                <span className="success-emoji">🙏</span>
+                <h3 className="success-title">Namaste, {name}!</h3>
+                <p className="success-text">
+                  Our team will call you on <strong>{phone}</strong> within 24 hours
+                  with full course details. You can also WhatsApp us directly.
+                </p>
+                <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 20, background: '#25D366', color: '#fff', padding: '12px 24px', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: 15 }}>
+                  💬 WhatsApp Us Now
+                </a>
               </div>
             ) : (
-              <button className="btn-cta-white" onClick={handleSubmit} disabled={status === 'loading'}>
-                {status === 'loading' ? '⏳ Registering...' : '📅 BOOK MY FREE CLASS NOW →'}
-              </button>
+              <>
+                <div className="field-wrap">
+                  <label className="field-label">Your Name</label>
+                  <input className="field-input" type="text" placeholder="e.g. Priya Sharma"
+                    value={name} onChange={e => setName(e.target.value)} required />
+                </div>
+                <div className="field-wrap">
+                  <label className="field-label">WhatsApp Number</label>
+                  <input className="field-input" type="tel" placeholder="10-digit mobile number"
+                    value={phone} onChange={e => setPhone(e.target.value)} maxLength={15} required />
+                </div>
+                {errorMsg && <p className="error-msg">⚠ {errorMsg}</p>}
+                <button className="submit-btn" onClick={handleSubmit}
+                  disabled={status === 'loading' || !name || !phone}>
+                  {status === 'loading' ? 'Sending...' : '🎓 Join First Class FREE →'}
+                </button>
+                <p className="privacy-note">🔒 No spam. We never share your details.</p>
+              </>
             )}
           </div>
-          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>🔒 Your information is safe. We will only contact you to schedule your free class.</p>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="footer">
-        <div className="footer-logo">Rahul Raj</div>
-        <div className="footer-tagline">VEDIC ASTROLOGER</div>
-        <div className="footer-links">
-          <a href="#home">Home</a>
-          <a href="#benefits">About</a>
-          <a href="#benefits">Course</a>
-          <a href="#testimonials">Certificates</a>
-          <a href="#faq">FAQ</a>
-          <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer">Contact</a>
+      {/* ── TESTIMONIALS ── */}
+      <section className="testimonials-section">
+        <div className="section-inner">
+          <div className="section-header">
+            <div className="section-eyebrow">❋ Student Stories ❋</div>
+            <h2 className="section-title">Real Students. Real Results.</h2>
+          </div>
+          <div className="testimonials-grid">
+            {[
+              ['Ananya Mishra', 'Delhi', 'I went from knowing nothing to doing paid consultations in 6 months. Rahul sir explains in simple Hindi — even complex dashas become clear.'],
+              ['Rohit Verma', 'Lucknow', 'The practical approach is what sets this apart. I can now read full Kundali charts. The certificate helped me start my own practice.'],
+              ['Sneha Patel', 'Ahmedabad', 'Best investment I made. The live classes are incredibly valuable — Rahul sir corrects your charts in real time. Worth every rupee.'],
+            ].map(([name, city, quote]) => (
+              <div key={name} className="testimonial-card">
+                <div className="t-stars">⭐⭐⭐⭐⭐</div>
+                <p className="t-quote">"{quote}"</p>
+                <div className="t-author">
+                  <div className="t-avatar">{name[0]}</div>
+                  <div>
+                    <div className="t-name">{name}</div>
+                    <div className="t-city">{city}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="footer-copy">© 2024 Rahul Raj Vedic Astrologer. All rights reserved.</div>
-      </footer>
+      </section>
 
-      {/* STICKY MOBILE CTA */}
-      {showSticky && (
-        <div className="sticky-cta">
-          <a href="#hero-form" className="btn-primary" style={{ flex: 1, textDecoration: 'none', fontSize: 13 }}>
-            📅 JOIN FREE CLASS
-          </a>
-          <a href="https://wa.me/919999999999" className="btn-whatsapp" style={{ flex: 1, fontSize: 13 }}>
-            💬 WhatsApp
-          </a>
+      {/* ── BOTTOM CTA ── */}
+      <section className="bottom-cta">
+        <p className="bottom-cta-tagline">❋ Limited Seats Available ❋</p>
+        <h2 className="bottom-cta-title">Start Your Astrology Journey Today</h2>
+        <p className="bottom-cta-sub">First class is completely FREE. No risk. No obligation.</p>
+        <a href="#enroll" className="bottom-cta-btn">
+          🎓 Claim Your Free Class Now
+        </a>
+      </section>
+
+      {/* ── FOOTER ── */}
+      <footer className="footer">
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <span>RAHUL RAJ</span> — VEDIC ASTROLOGER
+          </div>
+          <p className="footer-text">© 2024 Rahul Raj. All rights reserved.</p>
         </div>
-      )}
+      </footer>
     </>
   );
 }
