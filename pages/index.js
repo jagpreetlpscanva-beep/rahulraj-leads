@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 
 export default function Home() {
@@ -7,6 +7,41 @@ export default function Home() {
   const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupName, setPopupName] = useState('');
+  const [popupPhone, setPopupPhone] = useState('');
+  const [popupStatus, setPopupStatus] = useState('idle');
+  const [popupError, setPopupError] = useState('');
+
+  useEffect(() => {
+    const alreadyShown = sessionStorage.getItem('popupShown');
+    if (!alreadyShown) {
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+        sessionStorage.setItem('popupShown', 'true');
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  function closePopup() {
+    setShowPopup(false);
+  }
+
+  async function handlePopupSubmit(e) {
+    e.preventDefault();
+    setPopupStatus('loading');
+    setPopupError('');
+    const res = await fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: popupName, phone: popupPhone }),
+    });
+    const data = await res.json();
+    if (res.ok) setPopupStatus('success');
+    else { setPopupStatus('error'); setPopupError(data.error || 'Something went wrong.'); }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -241,6 +276,61 @@ export default function Home() {
         .footer-phone { font-size: 13px; color: #FFAB85; font-weight: 600; text-decoration: none; }
         .footer-phone:hover { color: #fff; }
 
+        .popup-overlay {
+          position: fixed; inset: 0; z-index: 1000;
+          background: rgba(26,14,0,0.55);
+          display: flex; align-items: center; justify-content: center;
+          padding: 20px;
+          animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.92) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .popup-card {
+          background: #fff; border-radius: 18px;
+          max-width: 440px; width: 100%;
+          position: relative; overflow: hidden;
+          box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+          animation: popIn 0.3s ease-out;
+        }
+        .popup-close {
+          position: absolute; top: 14px; right: 14px; z-index: 5;
+          width: 32px; height: 32px; border-radius: 50%;
+          background: rgba(255,255,255,0.9); border: 1px solid #FFD4B8;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 16px; color: #3a1f0e; cursor: pointer;
+          line-height: 1;
+        }
+        .popup-close:hover { background: #FFE8D6; }
+        .popup-header {
+          background: linear-gradient(135deg, #E8714A, #FFAB85);
+          padding: 32px 28px 24px; text-align: center; color: #fff;
+        }
+        .popup-eyebrow {
+          display: inline-block; background: rgba(255,255,255,0.2);
+          border: 1px solid rgba(255,255,255,0.4); border-radius: 100px;
+          padding: 4px 14px; font-size: 11px; font-weight: 700;
+          letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
+        }
+        .popup-title {
+          font-family: 'Playfair Display', serif; font-size: 26px;
+          font-weight: 900; line-height: 1.25; margin-bottom: 8px;
+        }
+        .popup-free-tag {
+          display: inline-flex; align-items: center; gap: 6px;
+          background: #fff; color: #E8714A; font-weight: 800;
+          font-size: 14px; padding: 6px 16px; border-radius: 100px;
+          margin-top: 4px; letter-spacing: 0.5px;
+        }
+        .popup-body { padding: 24px 28px 28px; }
+        .popup-sub { font-size: 13px; color: #9a5a3a; text-align: center; margin-bottom: 18px; }
+        .popup-form { display: flex; flex-direction: column; gap: 14px; }
+
+        @media (max-width: 480px) {
+          .popup-title { font-size: 22px; }
+          .popup-header { padding: 26px 20px 20px; }
+          .popup-body { padding: 20px 20px 24px; }
+        }
+
         @media (max-width: 900px) {
           .nav-links { display: none; }
           .nav-hamburger { display: block; }
@@ -263,6 +353,48 @@ export default function Home() {
           .testimonials-grid { grid-template-columns: 1fr; }
         }
       `}</style>
+
+      {showPopup && (
+        <div className="popup-overlay" onClick={closePopup}>
+          <div className="popup-card" onClick={(e) => e.stopPropagation()}>
+            <button className="popup-close" onClick={closePopup} aria-label="Close">✕</button>
+            <div className="popup-header">
+              <span className="popup-eyebrow">✦ Limited Seats</span>
+              <h3 className="popup-title">Join Astrology Class<br />with Rahul Raj</h3>
+              <span className="popup-free-tag">🎁 1st Class FREE</span>
+            </div>
+            <div className="popup-body">
+              {popupStatus === 'success' ? (
+                <div className="success-box">
+                  <span className="success-emoji">🙏</span>
+                  <h3 className="success-title">Namaste, {popupName}!</h3>
+                  <p className="success-text">Our team will call you on <strong>{popupPhone}</strong> within 24 hours with full course details.</p>
+                  <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" style={{display:'inline-flex',alignItems:'center',gap:8,marginTop:20,background:'#25D366',color:'#fff',padding:'12px 24px',borderRadius:8,fontWeight:700,textDecoration:'none',fontSize:15}}>💬 WhatsApp Us Now</a>
+                </div>
+              ) : (
+                <>
+                  <p className="popup-sub">Enter your details below — our team will call you within 24 hours.</p>
+                  <form className="popup-form" onSubmit={handlePopupSubmit}>
+                    <div className="field-wrap">
+                      <label className="field-label">Your Name</label>
+                      <input className="field-input" type="text" placeholder="e.g. Priya Sharma" value={popupName} onChange={e=>setPopupName(e.target.value)} required />
+                    </div>
+                    <div className="field-wrap">
+                      <label className="field-label">WhatsApp Number</label>
+                      <input className="field-input" type="tel" placeholder="10-digit mobile number" value={popupPhone} onChange={e=>setPopupPhone(e.target.value)} maxLength={15} required />
+                    </div>
+                    {popupError && <p className="error-msg">⚠ {popupError}</p>}
+                    <button className="submit-btn" type="submit" disabled={popupStatus==='loading'||!popupName||!popupPhone}>
+                      {popupStatus==='loading' ? 'Sending...' : '🎓 Join First Class FREE →'}
+                    </button>
+                    <p className="privacy-note">🔒 No spam. We never share your details.</p>
+                  </form>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <nav className="nav">
         <div className="nav-inner">
