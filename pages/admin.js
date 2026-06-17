@@ -3,6 +3,33 @@ import Head from 'next/head';
 
 const TABS = ['leads', 'courses', 'profile'];
 
+function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
   const [keyInput, setKeyInput] = useState('');
@@ -22,11 +49,13 @@ export default function Admin() {
   const [editingCourse, setEditingCourse] = useState(null);
   const [courseMsg, setCourseMsg] = useState('');
   const [showCourseForm, setShowCourseForm] = useState(false);
+  const [courseImgUploading, setCourseImgUploading] = useState(false);
 
   // Profile
   const [profile, setProfile] = useState({ name: '', bio: '', experience: '', students: '', consultations: '', rating: '', photo_url: '', phone: '', email: '' });
   const [profileMsg, setProfileMsg] = useState('');
   const [profileSaving, setProfileSaving] = useState(false);
+  const [profileImgUploading, setProfileImgUploading] = useState(false);
 
   const fetchLeads = useCallback(async (key) => {
     setLeadsLoading(true);
@@ -80,6 +109,23 @@ export default function Admin() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = `leads-${Date.now()}.csv`; a.click();
+  }
+
+  async function handleCourseImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setCourseMsg('Please select a valid image file.');
+      return;
+    }
+    setCourseImgUploading(true);
+    try {
+      const dataUrl = await compressImage(file, 800, 600, 0.8);
+      setCourseForm(prev => ({ ...prev, image_url: dataUrl }));
+    } catch (err) {
+      setCourseMsg('Failed to process image.');
+    }
+    setCourseImgUploading(false);
   }
 
   async function saveCourse(e) {
